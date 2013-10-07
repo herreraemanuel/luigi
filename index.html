@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <title>Luigi example</title>
+        <script type="text/javascript" src="js/phaser.min.js"></script>
+    </head>
+    <body>
+        <script>
+            var game = new Phaser.Game(480, 320, Phaser.CANVAS, 'game', {
+                preload: preload,
+                create: create,
+                update: update,
+                render: render
+            });
+            var luigi;
+            var SCALE = 3;
+
+            function preload() {
+                Phaser.Canvas.setSmoothingEnabled(game.context, false);
+                game.stage.backgroundColor = '#B7B7B7';
+                game.load.spritesheet('luigi', 'img/player.png', 16, 16, 5);
+            }
+
+            function create() {
+                luigi = game.add.sprite(20, 250, 'luigi');
+                luigi.body.collideWorldBounds = true;
+                luigi.anchor.setTo(0.5, 0.5);
+                luigi.animations.add('idle', [0], 12, true);
+                luigi.animations.add('run', [1, 2, 3], 12, true);
+                luigi.animations.add('jump', [4], 12, true);
+
+                luigi.scale.setTo(SCALE, SCALE);
+
+                this.text = game.add.text(20, 20);
+
+            }
+
+            function update() {
+                luigi.body.velocity.x = 0;
+                luigi.body.acceleration.y = 500;
+
+                if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+                    luigi.scale.x = -SCALE;
+                    luigi.body.velocity.x = -150;
+                }
+                else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+                    luigi.scale.x = SCALE;
+                    luigi.body.velocity.x = 150;
+                }
+
+                if (game.input.keyboard.isDown(Phaser.Keyboard.X) && !luigi.body.velocity.y) {
+                    luigi.body.velocity.y = -150;
+                }
+
+                if (luigi.body.velocity.y !== 0) {
+                    luigi.animations.play('jump');
+                }
+                else if (luigi.body.velocity.x === 0) {
+                    luigi.animations.play('idle');
+                }
+                else {
+                    luigi.animations.play('run');
+                }
+            }
+
+            function render() {
+
+            }
+            
+        </script>
+        <div id="game"></div>
+    </body>
+</html>
